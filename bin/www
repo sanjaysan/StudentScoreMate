@@ -1,0 +1,18 @@
+#!/usr/bin/env node
+
+/**
+ * Module dependencies.
+ */
+
+const app = require('../app')
+const db = require('../models/db')
+
+const port = process.env.PORT || '4000'
+app.set('port', port)
+
+// Sync and start server
+db.sequelize.sync({force: true}).then(function () {
+  app.listen(port, function () {
+    console.log('Server started on port: ', port)
+  })
+})
