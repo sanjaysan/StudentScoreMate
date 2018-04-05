@@ -52,6 +52,9 @@ class App extends Component {
       score: e.target.value
     }
 
+    // Updating the entered score
+    // e.target.name - Homework number (Ex. HW1/HW2/etc)
+    // selectedRowIndex is the index of the row which is getting updated
     axios.patch('/users/' + this.state.selectedRowIndex + '/' +
       e.target.name,
       update, headers).then(res => {
@@ -79,6 +82,7 @@ class App extends Component {
       }
       axios.post('/users/upload_file', formData, headers).then(res => {
         this.getUsers()
+        console.log(res.data)
       }).catch(err => {
         console.log(err)
       })
@@ -87,22 +91,38 @@ class App extends Component {
 
   handleClick (e) {
     let elt = e.target
+    // Getting the <tr> of the updated <td>
     while (elt.nodeName.toLowerCase() !== 'tr')
       elt = elt.parentNode
     this.setState({
+      // Getting the first column (id) of the updated row
       selectedRowIndex: elt.cells[0].innerText
     })
   }
 
   exportToCsv() {
     axios.get('/users/export_file').then(res => {
-      alert(res.data.msg)
+        let element = document.createElement('a');
+        element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(res.data.fileContents));
+        element.setAttribute('download', res.data.fileName);
+
+        element.style.display = 'none';
+        document.body.appendChild(element);
+
+        element.click();
+
+        document.body.removeChild(element);
+
     }).catch(err => {
       console.log(err)
     })
   }
 
   addUser (user) {
+
+    // When user presses the cancel button
+    // <code>user</code> param receives a
+    // false from the AddUser child component
     if (user === false) {
       this.setState({
         isNewUser: false
@@ -113,6 +133,7 @@ class App extends Component {
         isNewUser: true
       })
     } else {
+      // Not a valid user
       if (!user.id) {
         this.setState({
           isNewUser: false,
@@ -144,7 +165,7 @@ class App extends Component {
     return (
       <div className='App'>
         <div className='App-header mb-3'>
-          <h1>Welcome to Student Mark Sheet</h1>
+          <h1>Welcome to Student Score Mate</h1>
         </div>
         <div>
           <div className='input-group mb-3 col-md-6 offset-md-4'>

@@ -36,6 +36,10 @@ class AddUser extends Component {
   }
 
   render () {
+    // If the user presses the cancel button
+    // false will be returned to the <code>user</code>
+    // parameter of the addUser() function in the App
+    // component
     if (this.state.isUserCancelled)
       this.props.onSubmit(false)
     return (
